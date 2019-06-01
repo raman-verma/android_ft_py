@@ -45,6 +45,7 @@ class App(QWidget):
         self.dataView.setRootIsDecorated(False)
         self.dataView.setAlternatingRowColors(True)
         # self.dataView.setDisabled(True)
+        self.dataView.setSortingEnabled(True)
         self.dataView.clicked.connect(self.on_click)
 
         dataLayout = QHBoxLayout()
