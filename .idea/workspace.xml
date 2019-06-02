@@ -2,10 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="e289070d-589b-4a3d-b2e0-453f6ed855db" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/android_ft_py.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/android_ft_py.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/android_ft_gui.py" beforeDir="false" afterPath="$PROJECT_DIR$/android_ft_gui.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/temp.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/android_ft_gui.py" beforeDir="false" afterPath="$PROJECT_DIR$/practice/android_ft_gui.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android_ft_gui_mvc.py" beforeDir="false" afterPath="$PROJECT_DIR$/android_ft_gui_mvc.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -25,25 +24,15 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="android_ft_gui.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/android_ft_gui.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="370">
-              <caret line="86" column="31" lean-forward="true" selection-start-line="86" selection-start-column="31" selection-end-line="86" selection-end-column="31" />
-              <folding>
-                <element signature="e#48#58#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="android_ft_gui_mvc.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/android_ft_gui_mvc.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="250">
-              <caret line="105" lean-forward="true" selection-start-line="105" selection-end-line="105" />
+            <state relative-caret-position="106">
+              <caret line="83" column="34" selection-start-line="83" selection-start-column="34" selection-end-line="83" selection-end-column="34" />
               <folding>
                 <element signature="e#48#58#0" expanded="true" />
+                <element signature="e#3078#3421#0" />
+                <element signature="e#3455#3604#0" />
               </folding>
             </state>
           </provider>
@@ -52,10 +41,22 @@
       <file leaf-file-name="exa1.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/practice/exa1.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-110">
+            <state relative-caret-position="-625">
               <caret line="28" column="23" selection-start-line="28" selection-start-column="13" selection-end-line="28" selection-end-column="23" />
               <folding>
                 <element signature="e#48#58#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="exa2.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/practice/exa2.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="356">
+              <caret line="72" column="45" selection-start-line="72" selection-start-column="45" selection-end-line="72" selection-end-column="45" />
+              <folding>
+                <element signature="e#0#10#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -79,6 +80,12 @@
       <find>text_box</find>
       <find>textbox</find>
       <find>adbCommand</find>
+      <find>showdir_signal</find>
+      <find>getpath</find>
+      <find>verify_password</find>
+      <find>verifySignal</find>
+      <find>self.username</find>
+      <find>username</find>
     </findStrings>
     <replaceStrings>
       <replace>search_box</replace>
@@ -93,6 +100,7 @@
       <list>
         <option value="$PROJECT_DIR$/android_ft_gui.py" />
         <option value="$PROJECT_DIR$/practice/exa1.py" />
+        <option value="$PROJECT_DIR$/practice/exa2.py" />
         <option value="$PROJECT_DIR$/android_ft_gui_mvc.py" />
       </list>
     </option>
@@ -110,17 +118,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope">
-        <subPane subId="Project Files">
-          <expand>
-            <path>
-              <item name="Root" type="cbb8eebc:String" user="Root" />
-              <item name="android_ft_py" type="cbb8eebc:String" user="android_ft_py" />
-            </path>
-          </expand>
-          <select />
-        </subPane>
-      </pane>
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -132,6 +129,17 @@
               <item name="android_ft_py" type="b2602c69:ProjectViewProjectNode" />
               <item name="android_ft_py" type="462c0819:PsiDirectoryNode" />
               <item name="practice" type="462c0819:PsiDirectoryNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
+      <pane id="Scope">
+        <subPane subId="Project Files">
+          <expand>
+            <path>
+              <item name="Root" type="cbb8eebc:String" user="Root" />
+              <item name="android_ft_py" type="cbb8eebc:String" user="android_ft_py" />
             </path>
           </expand>
           <select />
@@ -180,7 +188,7 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/android_ft_gui.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/practice/android_ft_gui.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -222,6 +230,24 @@
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
     </configuration>
+    <configuration name="exa2" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="android_ft_py" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/practice" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/practice/exa2.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+    </configuration>
     <configuration name="temp" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="android_ft_py" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -245,10 +271,12 @@
       <item itemvalue="Python.android_ft_gui" />
       <item itemvalue="Python.exa1" />
       <item itemvalue="Python.android_ft_gui_mvc" />
+      <item itemvalue="Python.exa2" />
     </list>
     <recent_temporary>
       <list>
         <item itemvalue="Python.android_ft_gui_mvc" />
+        <item itemvalue="Python.exa2" />
         <item itemvalue="Python.android_ft_gui" />
         <item itemvalue="Python.exa1" />
         <item itemvalue="Python.temp" />
@@ -275,7 +303,7 @@
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.1437649" />
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Event Log" order="7" side_tool="true" />
-      <window_info anchor="bottom" id="Run" order="2" weight="0.32843137" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.32843137" />
       <window_info anchor="bottom" id="Version Control" order="7" />
       <window_info anchor="bottom" id="Python Console" order="7" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
@@ -302,7 +330,46 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/android_ft_gui.py">
+    <entry file="file://$PROJECT_DIR$/practice/android_ft_gui.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1155">
+          <caret line="86" column="31" lean-forward="true" selection-start-line="86" selection-start-column="31" selection-end-line="86" selection-end-column="31" />
+          <folding>
+            <element signature="e#48#58#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/practice/exa1.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="330">
+          <caret line="28" column="23" selection-start-line="28" selection-start-column="13" selection-end-line="28" selection-end-column="23" />
+          <folding>
+            <element signature="e#48#58#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/android_ft_gui_mvc.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1485">
+          <caret line="105" lean-forward="true" selection-start-line="105" selection-end-line="105" />
+          <folding>
+            <element signature="e#48#58#0" expanded="true" />
+            <element signature="e#3078#3421#0" />
+            <element signature="e#3455#3604#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/practice/temp.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="105">
+          <caret line="7" selection-start-line="7" selection-end-line="7" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/practice/android_ft_gui.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="825">
           <caret line="64" column="22" lean-forward="true" selection-start-line="64" selection-start-column="22" selection-end-line="64" selection-end-column="22" />
@@ -328,6 +395,8 @@
           <caret line="58" column="43" selection-start-line="58" selection-start-column="43" selection-end-line="58" selection-end-column="43" />
           <folding>
             <element signature="e#48#58#0" expanded="true" />
+            <element signature="e#3078#3421#0" />
+            <element signature="e#3455#3604#0" />
           </folding>
         </state>
       </provider>
@@ -339,7 +408,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/android_ft_gui.py">
+    <entry file="file://$PROJECT_DIR$/practice/android_ft_gui.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="105">
           <caret line="7" column="78" selection-start-line="7" selection-start-column="76" selection-end-line="7" selection-end-column="78" />
@@ -359,6 +428,16 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/practice/android_ft_gui.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1206">
+          <caret line="86" column="31" selection-start-line="86" selection-start-column="31" selection-end-line="86" selection-end-column="31" />
+          <folding>
+            <element signature="e#48#58#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/practice/temp.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="105">
@@ -366,19 +445,16 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/android_ft_gui.py">
+    <entry file="file://$APPLICATION_HOME_DIR$/helpers/typeshed/stdlib/3/functools.pyi">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="370">
-          <caret line="86" column="31" lean-forward="true" selection-start-line="86" selection-start-column="31" selection-end-line="86" selection-end-column="31" />
-          <folding>
-            <element signature="e#48#58#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="195">
+          <caret line="45" column="8" selection-start-line="45" selection-start-column="8" selection-end-line="45" selection-end-column="8" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/practice/exa1.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-110">
+        <state relative-caret-position="-625">
           <caret line="28" column="23" selection-start-line="28" selection-start-column="13" selection-end-line="28" selection-end-column="23" />
           <folding>
             <element signature="e#48#58#0" expanded="true" />
@@ -386,12 +462,24 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/practice/exa2.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="356">
+          <caret line="72" column="45" selection-start-line="72" selection-start-column="45" selection-end-line="72" selection-end-column="45" />
+          <folding>
+            <element signature="e#0#10#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/android_ft_gui_mvc.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="250">
-          <caret line="105" lean-forward="true" selection-start-line="105" selection-end-line="105" />
+        <state relative-caret-position="106">
+          <caret line="83" column="34" selection-start-line="83" selection-start-column="34" selection-end-line="83" selection-end-column="34" />
           <folding>
             <element signature="e#48#58#0" expanded="true" />
+            <element signature="e#3078#3421#0" />
+            <element signature="e#3455#3604#0" />
           </folding>
         </state>
       </provider>

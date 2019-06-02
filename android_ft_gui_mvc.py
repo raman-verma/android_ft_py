@@ -2,10 +2,11 @@
 # -*- coding: utf-8 -*-
 
 import sys
+from functools import partial
 from PyQt5.QtGui import QStandardItemModel
 from PyQt5.QtWidgets import (QApplication, QCheckBox, QComboBox, QGridLayout,
                              QGroupBox, QHBoxLayout, QLabel, QLineEdit, QTreeView, QVBoxLayout,
-                             QWidget, QPushButton, QMainWindow)
+                             QWidget, QPushButton, QMainWindow, QAbstractItemView)
 from PyQt5.QtCore import Qt, QObject, pyqtSlot, pyqtSignal
 import subprocess
 
@@ -15,6 +16,7 @@ class Model(QObject):
 
     def __init__(self, main_window):
         self.main_window = main_window
+        self.path = ""
 
     # List Model
     def createListModel(self):
@@ -34,68 +36,98 @@ class Model(QObject):
         return dir_list
 
     def getpath(self):
-        path = [str(data.data()) for data in self.main_window.view.dataView.selectedIndexes()]
-        return path
+        return self.path
+
+    def setpath(self, path):
+        self.path = path + "/"
 
 
-class View:
-    showdir = pyqtSignal(int)
+class View(QWidget):
+    showdir_signal = pyqtSignal()
+    openfolder_signal = pyqtSignal()
 
     def __init__(self, main_window):
+        super(View, self).__init__()
         self.main_window = main_window
-        model = self.main_window.model
 
+        # Initial Layout
         # Edit Box
         self.search_box = QLineEdit()
+        self.search_box.textChanged.connect(partial(setattr, self, "folderpath"))
 
         # Push button
-        button = QPushButton('see list')
-        button.setToolTip('Show List of items')
+        open_folder_button = QPushButton('see list')
+        open_folder_button.setToolTip('Show List of items')
 
         # Search and button Layout grouping
         horizontal_groupbox = QGroupBox()
         layout = QHBoxLayout()
         layout.addWidget(self.search_box)
-        layout.addWidget(button)
+        layout.addWidget(open_folder_button)
         horizontal_groupbox.setLayout(layout)
 
+        # Central Layout for data view
         # Tree View
-        dataGroupBox = QGroupBox("Android Directory")
+        data_groupBox = QGroupBox("Android Directory")
         self.dataView = QTreeView()
         self.dataView.setRootIsDecorated(False)
         self.dataView.setAlternatingRowColors(True)
         self.dataView.setSortingEnabled(True)
+        self.dataView.setEditTriggers(QAbstractItemView.NoEditTriggers)
 
-        dataLayout = QHBoxLayout()
-        dataLayout.addWidget(self.dataView)
-        dataGroupBox.setLayout(dataLayout)
+        data_layout = QHBoxLayout()
+        data_layout.addWidget(self.dataView)
+        data_groupBox.setLayout(data_layout)
+
+        # Footer Layout
+        labelpath = QLabel("PATH:")
+        self.path_label = QLabel()
+        push_button = QPushButton("Push")
+        push_button.setToolTip("Push this path to desire folder")
+
+        footer_groupbox = QGroupBox()
+        footer_layout = QHBoxLayout()
+        footer_layout.addWidget(labelpath)
+        footer_layout.addWidget(self.path_label)
+        footer_layout.addWidget(push_button, alignment=Qt.AlignCenter)
+        footer_groupbox.setLayout(footer_layout)
 
         main_layout = QVBoxLayout()
         main_layout.addWidget(horizontal_groupbox)
-        main_layout.addWidget(dataGroupBox)
+        main_layout.addWidget(data_groupBox)
+        main_layout.addWidget(footer_groupbox)
 
         main_window.setLayout(main_layout)
 
-        button.clicked.connect(model.getpath)
-        self.dataView.clicked.connect(model.getpath)
+        open_folder_button.clicked.connect(self.openfolder_signal)
+        self.dataView.doubleClicked.connect(self.showdir_signal)
 
 
 class Controller:
     def __init__(self, main_window):
-        self.main_window = main_window
+        self._main_window = main_window
+        self._model = self._main_window.model
+        self._view = self._main_window.view
 
-        model = self.main_window.model.createListModel()
-        self.main_window.view.dataView.setModel(model)
-        dir_list = self.main_window.model.adbcommand()
+        model = self._model.createListModel()
+        self._main_window.view.dataView.setModel(model)
+        dir_list = self._model.adbcommand()
         for i in dir_list:
-            self.main_window.model.addItem(model, str(i))
+            self._model.addItem(model, str(i))
 
-    def showpath(self):
-        print("sdfsdfsd")
-        self.path = self.main_window.model.getpath
+        self._view.showdir_signal.connect(self.showfoldername)
+        self._view.openfolder_signal.connect(self.showopenfolder)
 
-        self.main_window.view.search_box.setText(self.path[0])
-        self.main_window.view.search_box.setFocus()
+    def showfoldername(self):
+        folder_name = [str(data.data()) for data in self._view.dataView.selectedIndexes()]
+        self._view.search_box.setText(str(folder_name[0]))
+        self._view.search_box.setFocus()
+
+    def showopenfolder(self):
+        self._model.path = self._view.folderpath
+        self._model.setpath(self._model.path)
+
+        self._view.path_label.setText(self._model.getpath())
 
 
 class MainWindow(QWidget):
@@ -105,10 +137,15 @@ class MainWindow(QWidget):
         self.setWindowTitle(self.title)
 
         # Model for the View
+        # A model is the entity that keeps the information.
         self.model = Model(self)
-        # View for the window
+
+        # Views for the window.
+        # The view is the entity that shows the information.
         self.view = View(self)
-        # Controller for both model and view
+
+        # Controller for both model and view.
+        # The controller is the one that controls the flow of sight data according to a certain logic.
         self.controller = Controller(self)
 
 
