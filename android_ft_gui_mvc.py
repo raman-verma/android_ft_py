@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import sys
+import sys, os
 from functools import partial
 from PyQt5.QtGui import QStandardItemModel
 from PyQt5.QtWidgets import (QApplication, QCheckBox, QComboBox, QGridLayout,
                              QGroupBox, QHBoxLayout, QLabel, QLineEdit, QTreeView, QVBoxLayout,
                              QWidget, QPushButton, QMainWindow, QAbstractItemView)
-from PyQt5.QtCore import Qt, QObject, pyqtSlot, pyqtSignal
+from PyQt5.QtCore import Qt, QObject, pyqtSignal
 import subprocess
 
 
@@ -15,7 +15,9 @@ class Model(QObject):
     ITEM, ITEM2 = range(2)
 
     def __init__(self, main_window):
-        self.main_window = main_window
+        super().__init__()
+        self.adb = 'adb'
+        self._main_window = main_window
         self.path = ""
 
     # List Model
@@ -29,11 +31,24 @@ class Model(QObject):
         model.insertRow(0)
         model.setData(model.index(0, self.ITEM), item)
 
-    def adbcommand(self):
-        process = subprocess.Popen(["adb shell ls"], shell=True, stdout=subprocess.PIPE)
+    def device_list_parsed(self, *args):
+        process = subprocess.Popen(args, stdout=subprocess.PIPE)
+        print(args)
         stdout = process.communicate()[0]
-        dir_list = [i for i in format(stdout.decode("utf-8")).split("\n")]
-        return dir_list
+        dir_list = [i for i in format(stdout.decode("utf-8")).strip('\r\n').split()]
+        model = self.createListModel()
+        self._main_window.view.dataView.setModel(model)
+        for i in sorted(dir_list, reverse=True):
+            self.addItem(model, str(i))
+
+    def _adb(self, *args):
+        return self.device_list_parsed(self.adb, *args)
+
+    def adb_shell(self, *args):
+        return self._adb('shell', *args)
+
+    def adb_shell_ls(self, *args):
+        return self.adb_shell('ls', *args)
 
     def getpath(self):
         return self.path
@@ -99,6 +114,7 @@ class View(QWidget):
 
         main_window.setLayout(main_layout)
 
+        # Signals to button for do event and then show in view
         open_folder_button.clicked.connect(self.openfolder_signal)
         self.dataView.doubleClicked.connect(self.showdir_signal)
 
@@ -108,26 +124,20 @@ class Controller:
         self._main_window = main_window
         self._model = self._main_window.model
         self._view = self._main_window.view
+        self._model.adb_shell('ls')  # show list of initial directory.
 
-        model = self._model.createListModel()
-        self._main_window.view.dataView.setModel(model)
-        dir_list = self._model.adbcommand()
-        for i in dir_list:
-            self._model.addItem(model, str(i))
+        self._view.showdir_signal.connect(self.show_folder_name)
+        self._view.openfolder_signal.connect(self.show_open_folder_path)
 
-        self._view.showdir_signal.connect(self.showfoldername)
-        self._view.openfolder_signal.connect(self.showopenfolder)
-
-    def showfoldername(self):
+    def show_folder_name(self):
         folder_name = [str(data.data()) for data in self._view.dataView.selectedIndexes()]
+        self._model.setpath(str(folder_name[0]))  # set the selected file
         self._view.search_box.setText(str(folder_name[0]))
         self._view.search_box.setFocus()
 
-    def showopenfolder(self):
-        self._model.path = self._view.folderpath
-        self._model.setpath(self._model.path)
-
+    def show_open_folder_path(self):
         self._view.path_label.setText(self._model.getpath())
+        self._model.adb_shell_ls(self._model.getpath())
 
 
 class MainWindow(QWidget):
