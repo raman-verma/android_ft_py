@@ -83,6 +83,7 @@ class App(QWidget):
     @pyqtSlot()
     def on_click(self):
         path = [str(data.data()) for data in self.dataView.selectedIndexes()]
+        print(self.dataView.selectedIndexes()[0].row())
         self.textbox.setText(path[0])
         self.textbox.setFocus()
 

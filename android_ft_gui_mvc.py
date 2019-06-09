@@ -18,7 +18,8 @@ class Model(QObject):
         super().__init__()
         self.adb = 'adb'
         self._main_window = main_window
-        self.path = ""
+        self.full_path = ""
+        self.list_of_path = []
 
     # List Model
     def createListModel(self):
@@ -35,7 +36,9 @@ class Model(QObject):
         process = subprocess.Popen(args, stdout=subprocess.PIPE)
         print(args)
         stdout = process.communicate()[0]
-        dir_list = [i for i in format(stdout.decode("utf-8")).strip('\r\n').split()]
+        dir_list = [i for i in format(stdout.decode("utf-8")).split("\n")]
+
+        # Send the list of files to Model.
         model = self.createListModel()
         self._main_window.view.dataView.setModel(model)
         for i in sorted(dir_list, reverse=True):
@@ -50,16 +53,27 @@ class Model(QObject):
     def adb_shell_ls(self, *args):
         return self.adb_shell('ls', *args)
 
-    def getpath(self):
-        return self.path
+    def add_path_in_list(self, path):
+        self.list_of_path.append(path)
+        self.set_path()
 
-    def setpath(self, path):
-        self.path = path + "/"
+    def remove_path_in_list(self):
+        self.list_of_path.pop()
+        self.set_path()
+
+    def get_path(self):
+        return self.full_path
+
+    def set_path(self):
+        seprator = '/'
+        self.full_path = seprator.join(self.list_of_path)
 
 
 class View(QWidget):
-    showdir_signal = pyqtSignal()
+    single_click_event = pyqtSignal()
+    double_click_event = pyqtSignal()
     openfolder_signal = pyqtSignal()
+    pull_file_signal = pyqtSignal()
 
     def __init__(self, main_window):
         super(View, self).__init__()
@@ -71,7 +85,7 @@ class View(QWidget):
         self.search_box.textChanged.connect(partial(setattr, self, "folderpath"))
 
         # Push button
-        open_folder_button = QPushButton('see list')
+        open_folder_button = QPushButton('Back')
         open_folder_button.setToolTip('Show List of items')
 
         # Search and button Layout grouping
@@ -87,7 +101,7 @@ class View(QWidget):
         self.dataView = QTreeView()
         self.dataView.setRootIsDecorated(False)
         self.dataView.setAlternatingRowColors(True)
-        self.dataView.setSortingEnabled(True)
+        # self.dataView.setSortingEnabled(True)
         self.dataView.setEditTriggers(QAbstractItemView.NoEditTriggers)
 
         data_layout = QHBoxLayout()
@@ -97,14 +111,14 @@ class View(QWidget):
         # Footer Layout
         labelpath = QLabel("PATH:")
         self.path_label = QLabel()
-        push_button = QPushButton("Push")
-        push_button.setToolTip("Push this path to desire folder")
+        pull_button = QPushButton("Pull")
+        pull_button.setToolTip("Push this path to desire folder")
 
         footer_groupbox = QGroupBox()
         footer_layout = QHBoxLayout()
         footer_layout.addWidget(labelpath)
         footer_layout.addWidget(self.path_label)
-        footer_layout.addWidget(push_button, alignment=Qt.AlignCenter)
+        footer_layout.addWidget(pull_button, alignment=Qt.AlignCenter)
         footer_groupbox.setLayout(footer_layout)
 
         main_layout = QVBoxLayout()
@@ -116,7 +130,9 @@ class View(QWidget):
 
         # Signals to button for do event and then show in view
         open_folder_button.clicked.connect(self.openfolder_signal)
-        self.dataView.doubleClicked.connect(self.showdir_signal)
+        self.dataView.clicked.connect(self.single_click_event)
+        self.dataView.doubleClicked.connect(self.double_click_event)
+        pull_button.clicked.connect(self.pull_file_signal)
 
 
 class Controller:
@@ -124,20 +140,45 @@ class Controller:
         self._main_window = main_window
         self._model = self._main_window.model
         self._view = self._main_window.view
+        self.folder_name = ''
+        self.destination_folder = '/Users/ramanverma/Desktop/m_device/'
         self._model.adb_shell('ls')  # show list of initial directory.
 
-        self._view.showdir_signal.connect(self.show_folder_name)
+        self._view.single_click_event.connect(self.show_item_name)
+        self._view.double_click_event.connect(self.show_folder_list_items)
         self._view.openfolder_signal.connect(self.show_open_folder_path)
+        self._view.pull_file_signal.connect(self.pull_this_file)
 
-    def show_folder_name(self):
-        folder_name = [str(data.data()) for data in self._view.dataView.selectedIndexes()]
-        self._model.setpath(str(folder_name[0]))  # set the selected file
-        self._view.search_box.setText(str(folder_name[0]))
-        self._view.search_box.setFocus()
+    def show_item_name(self):
+        self.folder_name = [str(data.data()) for data in self._view.dataView.selectedIndexes()]
+        self._view.search_box.setText(str(self.folder_name[0]))
+        # self._view.search_box.setFocus()
+
+    def show_folder_list_items(self):
+        if self._view.dataView.selectedIndexes()[0].row() == 0:
+            try:
+                self._model.remove_path_in_list()
+                self._model.adb_shell_ls(self._model.get_path())
+                self._view.path_label.setText(self._model.get_path())
+            except IndexError:
+                pass
+        else:
+            # Giving selected item to path list.
+            self._model.add_path_in_list(str(self.folder_name[0]))  # add selected folder in the list.
+            self._view.path_label.setText(self._model.get_path())
+            self._model.adb_shell_ls(self._model.get_path())
 
     def show_open_folder_path(self):
-        self._view.path_label.setText(self._model.getpath())
-        self._model.adb_shell_ls(self._model.getpath())
+        try:
+            self._model.remove_path_in_list()
+            self._model.adb_shell_ls(self._model.get_path())
+            self._view.path_label.setText(self._model.get_path())
+        except IndexError:
+            pass
+
+    def pull_this_file(self):
+        subprocess.Popen("adb pull " + self._model.get_path() + " " + self.destination_folder, shell=True,
+                         stdout=subprocess.PIPE)
 
 
 class MainWindow(QWidget):
@@ -162,6 +203,6 @@ class MainWindow(QWidget):
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     main_window = MainWindow()
-    main_window.setMinimumSize(400, 500)
+    main_window.setMinimumSize(700, 600)
     main_window.show()
     sys.exit(app.exec_())
