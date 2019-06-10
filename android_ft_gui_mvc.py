@@ -19,6 +19,8 @@ class Model(QObject):
         self.adb = 'adb'
         self._main_window = main_window
         self.full_path = ""
+        self.initial_dir = "sdcard/"
+        self.destination_folder = '/Users/ramanverma/Desktop/m_device/'
         self.list_of_path = []
 
     # List Model
@@ -36,7 +38,7 @@ class Model(QObject):
         process = subprocess.Popen(args, stdout=subprocess.PIPE)
         print(args)
         stdout = process.communicate()[0]
-        dir_list = [i for i in format(stdout.decode("utf-8")).split("\n")]
+        dir_list = [i.replace(" ", "\\ ") for i in format(stdout.decode("utf-8")).split("\n")]
 
         # Send the list of files to Model.
         model = self.createListModel()
@@ -66,18 +68,20 @@ class Model(QObject):
 
     def set_path(self):
         seprator = '/'
-        self.full_path = seprator.join(self.list_of_path)
+        self.full_path = self.initial_dir + seprator.join(self.list_of_path)
 
 
 class View(QWidget):
     single_click_event = pyqtSignal()
     double_click_event = pyqtSignal()
-    openfolder_signal = pyqtSignal()
+    go_back_signal = pyqtSignal()
     pull_file_signal = pyqtSignal()
 
     def __init__(self, main_window):
         super(View, self).__init__()
         self.main_window = main_window
+
+        label_path1 = QLabel("Copy till here: ")
 
         # Initial Layout
         # Edit Box
@@ -85,14 +89,15 @@ class View(QWidget):
         self.search_box.textChanged.connect(partial(setattr, self, "folderpath"))
 
         # Push button
-        open_folder_button = QPushButton('Back')
-        open_folder_button.setToolTip('Show List of items')
+        go_back_button = QPushButton('Back')
+        go_back_button.setToolTip('Show List of items')
 
         # Search and button Layout grouping
         horizontal_groupbox = QGroupBox()
         layout = QHBoxLayout()
+        layout.addWidget(label_path1)
         layout.addWidget(self.search_box)
-        layout.addWidget(open_folder_button)
+        layout.addWidget(go_back_button)
         horizontal_groupbox.setLayout(layout)
 
         # Central Layout for data view
@@ -109,15 +114,19 @@ class View(QWidget):
         data_groupBox.setLayout(data_layout)
 
         # Footer Layout
-        labelpath = QLabel("PATH:")
-        self.path_label = QLabel()
+        label_path2 = QLabel("PATH:")
+        label_path2.setStyleSheet("border: .5px solid black; max-width:50px;")
+        self.path_label_name = QLabel()
+        self.path_label_name.setStyleSheet("border: 1px solid black; min-width:450px;")
+        self.path_label_name.setWordWrap(True)
         pull_button = QPushButton("Pull")
         pull_button.setToolTip("Push this path to desire folder")
+        pull_button.setStyleSheet("min-width: 70px;min-height:15px")
 
         footer_groupbox = QGroupBox()
         footer_layout = QHBoxLayout()
-        footer_layout.addWidget(labelpath)
-        footer_layout.addWidget(self.path_label)
+        footer_layout.addWidget(label_path2)
+        footer_layout.addWidget(self.path_label_name)
         footer_layout.addWidget(pull_button, alignment=Qt.AlignCenter)
         footer_groupbox.setLayout(footer_layout)
 
@@ -129,7 +138,7 @@ class View(QWidget):
         main_window.setLayout(main_layout)
 
         # Signals to button for do event and then show in view
-        open_folder_button.clicked.connect(self.openfolder_signal)
+        go_back_button.clicked.connect(self.go_back_signal)
         self.dataView.clicked.connect(self.single_click_event)
         self.dataView.doubleClicked.connect(self.double_click_event)
         pull_button.clicked.connect(self.pull_file_signal)
@@ -141,12 +150,11 @@ class Controller:
         self._model = self._main_window.model
         self._view = self._main_window.view
         self.folder_name = ''
-        self.destination_folder = '/Users/ramanverma/Desktop/m_device/'
-        self._model.adb_shell('ls')  # show list of initial directory.
+        self._model.adb_shell('ls ' + self._model.initial_dir)  # show list of initial directory.
 
         self._view.single_click_event.connect(self.show_item_name)
         self._view.double_click_event.connect(self.show_folder_list_items)
-        self._view.openfolder_signal.connect(self.show_open_folder_path)
+        self._view.go_back_signal.connect(self.go_back_fun)
         self._view.pull_file_signal.connect(self.pull_this_file)
 
     def show_item_name(self):
@@ -159,26 +167,30 @@ class Controller:
             try:
                 self._model.remove_path_in_list()
                 self._model.adb_shell_ls(self._model.get_path())
-                self._view.path_label.setText(self._model.get_path())
+                self._view.path_label_name.setText(self._model.get_path())
             except IndexError:
                 pass
         else:
             # Giving selected item to path list.
             self._model.add_path_in_list(str(self.folder_name[0]))  # add selected folder in the list.
-            self._view.path_label.setText(self._model.get_path())
+            self._view.path_label_name.setText(self._model.get_path())
             self._model.adb_shell_ls(self._model.get_path())
 
-    def show_open_folder_path(self):
+    def go_back_fun(self):
         try:
             self._model.remove_path_in_list()
             self._model.adb_shell_ls(self._model.get_path())
-            self._view.path_label.setText(self._model.get_path())
+            self._view.path_label_name.setText(self._model.get_path())
         except IndexError:
             pass
 
     def pull_this_file(self):
-        subprocess.Popen("adb pull " + self._model.get_path() + " " + self.destination_folder, shell=True,
-                         stdout=subprocess.PIPE)
+        if self._model.get_path() is None:
+            pass
+        else:
+            path_to_pull = "adb pull " + self._model.get_path() + "/" + self._view.search_box.text() + " " + self._model.destination_folder
+            proc = subprocess.Popen(path_to_pull, shell=True, stdout=subprocess.PIPE)
+            print("pass")
 
 
 class MainWindow(QWidget):
