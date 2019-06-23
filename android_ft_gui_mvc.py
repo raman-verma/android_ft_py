@@ -9,6 +9,7 @@ from PyQt5.QtWidgets import (QApplication, QCheckBox, QComboBox, QGridLayout,
                              QWidget, QPushButton, QMainWindow, QAbstractItemView)
 from PyQt5.QtCore import Qt, QObject, pyqtSignal
 import subprocess
+import re
 
 
 class Model(QObject):
@@ -163,6 +164,8 @@ class Controller:
         # self._view.search_box.setFocus()
 
     def show_folder_list_items(self):
+        reg = r"\.\w+"
+
         if self._view.dataView.selectedIndexes()[0].row() == 0:
             try:
                 self._model.remove_path_in_list()
@@ -171,10 +174,12 @@ class Controller:
             except IndexError:
                 pass
         else:
-            # Giving selected item to path list.
-            self._model.add_path_in_list(str(self.folder_name[0]))  # add selected folder in the list.
-            self._view.path_label_name.setText(self._model.get_path())
-            self._model.adb_shell_ls(self._model.get_path())
+            if not re.search(reg, str(self.folder_name[0])):    #not working properly, as folder containing '.' is not fine
+
+                # Giving selected item to path list.
+                self._model.add_path_in_list(str(self.folder_name[0]))  # add selected folder in the list.
+                self._view.path_label_name.setText(self._model.get_path())  # set the total path in below label
+                self._model.adb_shell_ls(self._model.get_path())  # run command to open the selected folder
 
     def go_back_fun(self):
         try:
@@ -188,8 +193,9 @@ class Controller:
         if self._model.get_path() is None:
             pass
         else:
-            path_to_pull = "adb pull " + self._model.get_path() + "/" + self._view.search_box.text() + " " + self._model.destination_folder
-            proc = subprocess.Popen(path_to_pull, shell=True, stdout=subprocess.PIPE)
+            path_to_pull = str(
+                "adb pull " + self._model.get_path() + "/" + self._view.search_box.text() + " " + self._model.destination_folder)
+            subprocess.Popen(path_to_pull, shell=True, stdout=subprocess.PIPE)
             print("pass")
 
 
